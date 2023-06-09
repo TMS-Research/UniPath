@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('subjects', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("group_id")->nullable();
-            $table->string("subject_name", 150);
+            $table->string("name", 150);
             $table->timestamps();
 
             $table->foreign("group_id")->references("id")->on("subject_group");

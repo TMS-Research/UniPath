@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use App\Models\FormProgram;
 use App\Models\ProgramSubject;
+use App\Models\Subject;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use PDO;
 use Throwable;
 
 use function PHPSTORM_META\map;
@@ -73,8 +76,15 @@ class FormController extends Controller
         $form = FormProgram::where('form_id', $id['id'])->get();
         $alldata = [];
         foreach($form as $fo){
-            $data = ProgramSubject::where('program_id', $fo['program_id'])->get();
-            $alldata+=$data; 
+            $data = DB::table('program_subject')
+                        ->select('subject_name')
+                        ->where('program_id', $fo['program_id'])
+                        ->join('subjects', 'program_subject.subject_id', '=', 'subjects.id')
+                        ->get();
+            foreach($data as $da){
+                
+                $alldata +=$data->subject_name;
+            }
         }
         dd($alldata);
 
