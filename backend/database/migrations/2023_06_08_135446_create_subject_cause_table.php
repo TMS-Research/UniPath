@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("form_id");
             $table->unsignedBigInteger("subject_id");
+
             $table->boolean("isGood");
             $table->boolean("isInterested");
             $table->boolean("isRequired");
