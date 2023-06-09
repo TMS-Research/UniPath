@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('user_form', function (Blueprint $table) {
             $table->id();
-            $table->enum('meeting_person', ["Ms.Ellie", "Mr.Eric"]);
-            $table->datetime("meeting_time");
+            $table->unsignedBigInteger('user_id');
+            $table->enum('meeting_person', ["Ms.Ellie", "Mr.Eric"])->nullable();
+            $table->datetime("meeting_time")->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
