@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("form_id");
             $table->unsignedBigInteger("subject_id");
-            $table->array("cause");
+            $table->string("cause");
             $table->timestamps();
 
             $table->foreign("form_id")->references("id")->on("user_form");
