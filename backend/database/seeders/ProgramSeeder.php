@@ -18,7 +18,7 @@ class ProgramSeeder extends Seeder
 
         foreach($data as $da){
             DB::table('programs')->insert([
-                'program_name' => $da,
+                'name' => $da,
                 'created_at' => now()
             ]);
         }

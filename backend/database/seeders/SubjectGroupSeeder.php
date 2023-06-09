@@ -17,7 +17,7 @@ class SubjectGroupSeeder extends Seeder
 
         foreach($data as $da){
             DB::table("subject_group")->insert([
-                'group_name' => $da,
+                'name' => $da,
                 'created_at' => now()
             ]);
         }
