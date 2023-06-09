@@ -21,7 +21,7 @@ class SubjectSeeder extends Seeder
         $no = array(1,1,1,2,2,2,2,5,5,5,5,6,6,6,3,3,3,3,3,3,4,4,4,4);
         foreach($datanogr as $da){
             DB::table('subjects')->insert([
-                'subject_name' => $da,
+                'name' => $da,
                 'created_at' => now()
             ]);
         }
