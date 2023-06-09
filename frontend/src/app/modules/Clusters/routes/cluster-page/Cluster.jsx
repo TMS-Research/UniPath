@@ -3,16 +3,16 @@ import "./../../styles/index.scope.css";
 // import { Toast } from "primereact/toast";
 import React, { useEffect, useState } from "react";
 import { Button, message, Steps } from "antd";
-import { getCareerCluster } from "../../api/ClusterService";
+import { getCareerCluster, getSubjectDP } from "../../api/ClusterService";
 
 const steps = [
   {
     title: "Career Clusters",
-    content: "Career Clusters",
+    content: "program_name",
   },
   {
     title: "Diploma Programmed",
-    content: "Diploma Programmed",
+    content: "subject_name",
   },
   {
     title: "Subject Because",
@@ -47,6 +47,15 @@ const Cluster = () => {
             throw err;
           });
         break;
+      case 1:
+        await getSubjectDP()
+          .then(({ data }) => {
+            setResponseData(data);
+          })
+          .catch((err) => {
+            throw err;
+          });
+        break;
       default:
         break;
     }
@@ -69,7 +78,7 @@ const Cluster = () => {
         <div className="cluster--wrapper-content-body">
           <div className="cluster--wrapper-content-body--box-content">
             {responseData?.map((item, idx) => (
-              <span key={idx}>{item.program_name  }</span>
+              <span key={idx}>{item.program_name}</span>
             ))}
           </div>
         </div>
