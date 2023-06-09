@@ -8,3 +8,11 @@ export async function getCareerCluster() {
     throw error;
   }
 }
+export async function getSubjectDP() {
+  try {
+    const { data } = await api.get("/subject");
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
