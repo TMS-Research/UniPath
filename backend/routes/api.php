@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Http\Request;
@@ -22,5 +23,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::resource("program", ProgramController::class);
 Route::resource("subject", SubjectController::class);
+Route::post("/form/stepone", [FormController::class, 'stepone'])->name('form.step-one');
+Route::get("/form/steptwo/{id}", [FormController::class, 'show_rr'])->name('form.showrr');
+Route::post("/form/steptwo", [FormController::class, 'steptwo'])->name('form.step-two');
 
 require __DIR__.'/auth.php';
