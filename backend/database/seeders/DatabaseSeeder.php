@@ -14,12 +14,14 @@ class DatabaseSeeder extends Seeder
     {
         // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+         \App\Models\User::factory()->create([
+             'name' => 'User',
+             'email' => 'test@example.com',
+             'password' => 'tes'
+         ]);
         $this->call([
             ProgramSeeder::class,
+            SubjectGroupSeeder::class,
             SubjectSeeder::class,
             MathStreamSeeder::class,
             ProgramSubjectSeeder::class
