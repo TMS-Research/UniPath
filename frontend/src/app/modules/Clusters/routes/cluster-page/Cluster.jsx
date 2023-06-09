@@ -4,6 +4,9 @@ import "./../../styles/index.scope.css";
 import React, { useEffect, useState } from "react";
 import { Button, message, Steps } from "antd";
 import { getCareerCluster, getSubjectDP } from "../../api/ClusterService";
+import LoadComponent from "../../../../components/loaders/LoadComponent";
+
+import Swal from "sweetalert2";
 
 const steps = [
   {
@@ -31,29 +34,49 @@ const steps = [
 const Cluster = () => {
   const [current, setCurrent] = useState(0);
   const [responseData, setResponseData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const next = () => {
-    setCurrent(current + 1);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to proceed to the next step?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes!",
+    }).then((result) => {
+      setCurrent(current + 1);
+      getDataSubject(current + 1);
+    });
   };
 
   const getDataSubject = async (current) => {
     switch (current) {
       case 0:
+        setIsLoading(true);
         await getCareerCluster()
           .then(({ data }) => {
             setResponseData(data);
           })
           .catch((err) => {
             throw err;
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
         break;
       case 1:
+        setIsLoading(true);
         await getSubjectDP()
           .then(({ data }) => {
             setResponseData(data);
           })
           .catch((err) => {
             throw err;
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
         break;
       default:
@@ -77,9 +100,13 @@ const Cluster = () => {
         </div>
         <div className="cluster--wrapper-content-body">
           <div className="cluster--wrapper-content-body--box-content">
-            {responseData?.map((item, idx) => (
-              <span key={idx}>{item.program_name}</span>
-            ))}
+            {isLoading ? (
+              <LoadComponent />
+            ) : (
+              responseData?.map((item, idx) => (
+                <span key={idx}>{item.program_name}</span>
+              ))
+            )}
           </div>
         </div>
         <div className="cluster--wrapper-content-footer">
