@@ -28,7 +28,7 @@ class SubjectSeeder extends Seeder
 
         foreach($datawithgr as $key => $da){
             DB::table('subjects')->insert([
-                'subject_name' => $da,
+                'name' => $da,
                 'group_id' => $no[$key],
                 'created_at' => now()
             ]);
