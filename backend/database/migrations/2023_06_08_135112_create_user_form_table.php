@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_form', function (Blueprint $table) {
             $table->id();
-            $table->array("subject_id");
-            $table->enum('meeting_person',["Ms.Ellie","Mr.Eric"]);
+            $table->enum('meeting_person', ["Ms.Ellie", "Mr.Eric"]);
             $table->datetime("meeting_time");
             $table->timestamps();
         });
