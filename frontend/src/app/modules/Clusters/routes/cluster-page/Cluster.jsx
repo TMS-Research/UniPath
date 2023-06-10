@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Button, message, Steps } from "antd";
 import { getCareerCluster, getSubjectDP } from "../../api/ClusterService";
 import LoadComponent from "../../../../components/loaders/LoadComponent";
+import { Checkbox } from "primereact/checkbox";
 
 import Swal from "sweetalert2";
 
@@ -35,6 +36,7 @@ const Cluster = () => {
   const [current, setCurrent] = useState(0);
   const [responseData, setResponseData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const next = () => {
     Swal.fire({
@@ -46,8 +48,15 @@ const Cluster = () => {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes!",
     }).then((result) => {
-      setCurrent(current + 1);
-      getDataSubject(current + 1);
+      if (result.isConfirmed) {
+        setCurrent(current + 1);
+        getDataSubject(current + 1);
+        return;
+      } else {
+        setCurrent(current);
+        // getDataSubject(current);
+        return;
+      }
     });
   };
 
@@ -84,6 +93,18 @@ const Cluster = () => {
     }
   };
 
+  const onCategoryChange = (e) => {
+    let _selectedCategories = [...selectedCategories];
+
+    if (e.checked) _selectedCategories.push(e.value);
+    else
+      _selectedCategories = _selectedCategories.filter(
+        (category) => category.key !== e.value.key
+      );
+
+    setSelectedCategories(_selectedCategories);
+  };
+
   const items = steps.map((item) => ({ key: item.title, title: item.title }));
 
   useEffect(() => {
@@ -103,8 +124,21 @@ const Cluster = () => {
             {isLoading ? (
               <LoadComponent />
             ) : (
-              responseData?.map((item, idx) => (
-                <span key={idx}>{item.program_name}</span>
+              responseData?.map((data, idx) => (
+                <div key={idx} className="d-flex align-items-center gap-5">
+                  <Checkbox
+                    inputId={data.id}
+                    name="data"
+                    value={data}
+                    onChange={onCategoryChange}
+                    checked={selectedCategories.some(
+                      (item) => item.id === data.id
+                    )}
+                  />
+                  <label htmlFor={data.id} className="ml-2">
+                    {data.name}
+                  </label>
+                </div>
               ))
             )}
           </div>
