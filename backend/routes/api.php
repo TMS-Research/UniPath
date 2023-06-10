@@ -26,5 +26,9 @@ Route::resource("subject", SubjectController::class);
 Route::post("/form/stepone", [FormController::class, 'stepone'])->name('form.step-one');
 Route::get("/form/steptwo/{id}", [FormController::class, 'show_rr'])->name('form.showrr');
 Route::post("/form/steptwo", [FormController::class, 'steptwo'])->name('form.step-two');
+Route::get("/form/stepthree/{id}", [FormController::class, 'show_fs'])->name('form.showfs');
+Route::post("/form/stepthree", [FormController::class, 'stepthree'])->name('form.step-three');
+Route::post("/form/stepfour", [FormController::class, 'stepfour'])->name('form.step-four');
+Route::get("/form/final/{id}", [FormController::class, 'finalstep'])->name('form.finalstep');
 
 require __DIR__.'/auth.php';
