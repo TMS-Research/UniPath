@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use App\Models\FormProgram;
 use App\Models\FormSubject;
+use App\Models\Program;
 use App\Models\ProgramSubject;
 use App\Models\Subject;
 use App\Models\SubjectCause;
@@ -220,6 +221,43 @@ class FormController extends Controller
         return response()->json([
             'status' => 'OK',
             'data' =>  $alldata
+        ]);
+    }
+
+    
+    /**
+     * Get Subject per Group for choosen
+     */
+    public function show_gs(Form $id)
+    {
+        $program = FormProgram::select("program_id")->where('form_id', $id['id'])->get();
+        $bol = true;
+        foreach($program as $pro){
+            if($pro['program_id'] == 9 || $pro['program_id'] == 13 || $pro['program_id'] == 22){
+                $bol = false;
+                break;
+            }
+        }
+        $group1 = Subject::where("group_id", 1)->get();
+        $group2 = Subject::where("group_id", 1)->orWhere("group_id", 2)->get();
+        $group3 = Subject::where("group_id", 3)->get();
+        $group4 = Subject::where("group_id", 4)->get();
+        $group5 = Subject::where("group_id", 5)->get();
+        $group6 ="";
+        if($bol){
+            $group6 = Subject::where("group_id", 3)->orWhere("group_id", 4)->get();
+        }else{
+            $group6 = Subject::where("group_id", 6)->get();
+        }
+        
+        return response()->json([
+            'status' => "OK",
+            "group_1" => $group1,
+            "group_2" => $group2,
+            "group_3" => $group3,
+            "group_4" => $group4,
+            "group_5" => $group5,
+            "group_6" => $group6,
         ]);
     }
 }
