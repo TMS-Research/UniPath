@@ -16,9 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger("form_id");
             $table->unsignedBigInteger("subject_id");
 
-            $table->boolean("isGood");
-            $table->boolean("isInterested");
-            $table->boolean("isRequired");
+            $table->boolean("isGood")->default(0);
+            $table->boolean("isInterested")->default(0);
+            $table->boolean("isRequired")->default(0);
             $table->timestamps();
             $table->foreign("form_id")->references("id")->on("user_form");
             $table->foreign("subject_id")->references("id")->on("subjects");
