@@ -12,8 +12,9 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $data = Subject::all();
+        $data = Subject::orderBy("name", "ASC")->get();
 
+        // dd($data);
         return response()->json([
             'status' => 'OK',
             'data' => $data

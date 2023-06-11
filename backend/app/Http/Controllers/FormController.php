@@ -37,25 +37,24 @@ class FormController extends Controller
             'programs' => 'required|array|max:3|min:1'
         ]);
         $formid = '';
-        try{
+        try {
             $program = $validated['programs'];
             unset($validated["programs"]);
-            
+
             $validated['user_id'] = 1;
             $form = Form::create($validated);
-            $formid = $form['id']; 
-            foreach($program as $pro){
+            $formid = $form['id'];
+            foreach ($program as $pro) {
                 $data = [
                     'form_id' => $form['id'],
                     'program_id' => $pro
                 ];
                 FormProgram::create($data);
             }
-        }catch(Throwable $e){
-
+        } catch (Throwable $e) {
         }
 
-        $form = Form::where('id',$formid)->get();
+        $form = Form::where('id', $formid)->first();
 
         return response()->json([
             'status' => "OK",
@@ -64,7 +63,7 @@ class FormController extends Controller
     }
 
 
-     /**
+    /**
      * Create the subject choose
      */
     public function steptwo(Request $request)
@@ -74,14 +73,14 @@ class FormController extends Controller
             'form_id' => 'required'
         ]);
         $subjects  = $validated['subjects'];
-        foreach($subjects as $sub){
+        foreach ($subjects as $sub) {
             $data = [
                 'subject_id' => $sub,
                 'form_id' => $validated['form_id']
             ];
             FormSubject::create($data);
         }
-        $form = Form::where('id', $validated['form_id'])->get();
+        $form = Form::where('id', $validated['form_id'])->first();
         return response()->json([
             'status' => 'OK',
             'data' => $form
@@ -94,14 +93,14 @@ class FormController extends Controller
     {
         $form = FormProgram::where('form_id', $id['id'])->get();
         $alldata = [];
-        foreach($form as $fo){
+        foreach ($form as $fo) {
             $data = DB::table('program_subject')
-                        ->select('name')
-                        ->where('program_id', $fo['program_id'])
-                        ->join('subjects', 'program_subject.subject_id', '=', 'subjects.id')
-                        ->get();
-            foreach($data as $da){
-                array_push($alldata,$da->name);
+                ->select('name')
+                ->where('program_id', $fo['program_id'])
+                ->join('subjects', 'program_subject.subject_id', '=', 'subjects.id')
+                ->get();
+            foreach ($data as $da) {
+                array_push($alldata, $da->name);
             }
         }
         $alldata = array_unique($alldata);
@@ -119,10 +118,10 @@ class FormController extends Controller
     public function show_fs(Form $id)
     {
         $data = DB::table('form_subject')
-                    ->select('subject_id','name')
-                    ->where('form_id', $id['id'])
-                    ->join('subjects', 'form_subject.subject_id', '=', 'subjects.id')
-                    ->get();
+            ->select('subject_id', 'name')
+            ->where('form_id', $id['id'])
+            ->join('subjects', 'form_subject.subject_id', '=', 'subjects.id')
+            ->get();
 
         return response()->json([
             'status' => 'OK',
@@ -140,7 +139,7 @@ class FormController extends Controller
             'form_id' => 'required'
         ]);
         $causes = $validated['causes'];
-        foreach($causes as $cas){
+        foreach ($causes as $cas) {
             $data = [
                 'form_id' => $validated['form_id'],
                 'subject_id' => $cas['subject_id'],
@@ -158,19 +157,18 @@ class FormController extends Controller
         }
 
         $form = Form::where('id', $validated['form_id'])->get();
-        
+
         return response()->json([
             'status' => 'OK',
             'data' => $form
         ]);
-
     }
 
     /**
      * Save the meeting person and time
      */
     public function stepfour(Request $request)
-    {   
+    {
         $validated = $request->validate([
             'form_id' =>  'required',
             'meeting_time' => 'required',
@@ -193,31 +191,31 @@ class FormController extends Controller
     public function finalstep(Form $id)
     {
         $program = DB::table('form_program')
-                    ->select('name')
-                    ->where('form_id',$id['id'])
-                    ->join('programs', 'form_program.program_id', '=', 'programs.id')
-                    ->get();
-        $data1= [];
-        foreach($program as $pro){
-           array_push($data1,$pro->name);
+            ->select('name')
+            ->where('form_id', $id['id'])
+            ->join('programs', 'form_program.program_id', '=', 'programs.id')
+            ->get();
+        $data1 = [];
+        foreach ($program as $pro) {
+            array_push($data1, $pro->name);
         }
 
         $subject = DB::table('form_subject')
-                    ->select('name')
-                    ->where('form_id',$id['id'])
-                    ->join('subjects', 'form_subject.subject_id', '=', 'subjects.id')
-                    ->get();
+            ->select('name')
+            ->where('form_id', $id['id'])
+            ->join('subjects', 'form_subject.subject_id', '=', 'subjects.id')
+            ->get();
         $data2 = [];
-        foreach($subject as $sub){
-           array_push($data2,$sub->name );
+        foreach ($subject as $sub) {
+            array_push($data2, $sub->name);
         }
-        
 
-        $alldata=[
+
+        $alldata = [
             'programs' => $data1,
-            'subjects'=> $data2,
+            'subjects' => $data2,
             'form' => $id
-        ]; 
+        ];
         return response()->json([
             'status' => 'OK',
             'data' =>  $alldata
