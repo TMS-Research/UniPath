@@ -24,7 +24,7 @@ const SuspensedView = ({ children }) => {
     barColors: {
       0: "#023047",
     },
-    barThickness: 1.5,
+    barThickness: 1.8,
     shadowBlur: 5,
   });
   return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>;

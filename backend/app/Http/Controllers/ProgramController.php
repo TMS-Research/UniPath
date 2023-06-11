@@ -12,7 +12,7 @@ class ProgramController extends Controller
      */
     public function index()
     {
-        $data = Program::all();
+        $data = Program::orderBy("name", "ASC")->get();
 
         return response()->json([
             'status' => 'OK',
