@@ -3,6 +3,7 @@ import "./../../styles/index.scope.css";
 // import { Toast } from "primereact/toast";
 import React, { useEffect, useState } from "react";
 import { Button, Divider, message, Steps } from "antd";
+import { Dropdown } from "primereact/dropdown";
 import {
   getCareerCluster,
   getRequiredSubjectDP,
@@ -15,7 +16,6 @@ import LoadComponent from "../../../../components/loaders/LoadComponent";
 import { Checkbox } from "primereact/checkbox";
 
 import Swal from "sweetalert2";
-import { all } from "axios";
 
 const steps = [
   {
@@ -47,7 +47,16 @@ const Cluster = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [selectedSubjectsDP, setSelectedSubjectsDP] = useState([]);
   const [formID, setFormID] = useState(0);
+
+  // select subjectDP
+  const [languageLiterature, setLanguageLiterature] = useState(null);
+  const [languageAcquistition, setLanguageAcquistition] = useState(null);
+  const [mathematics, setMathematics] = useState(null);
+  const [individualSocieties, setIndividualSocieties] = useState(null);
+  const [science, setScience] = useState(null);
+  const [arts, setArts] = useState(null);
 
   const next = () => {
     if (
@@ -67,7 +76,7 @@ const Cluster = () => {
       return;
     } else if (
       current === 1 &&
-      (selectedCategories.length === 0 || selectedCategories.length < 6)
+      (selectedSubjectsDP.length === 0 || selectedSubjectsDP.length < 6)
     ) {
       Swal.fire({
         title: "There must be a cluster option!!",
@@ -98,7 +107,6 @@ const Cluster = () => {
         }
       } else {
         setCurrent(current);
-        // getDataSubject(current);
       }
     });
   };
@@ -119,9 +127,10 @@ const Cluster = () => {
         break;
       case 1:
         setIsLoading(true);
-        await getSubjectDP()
-          .then(({ data }) => {
-            setResponseData(data);
+        await getSubjectDP(formIdStepOne)
+          .then((res) => {
+            setResponseData(res);
+            console.log(res);
           })
           .catch((err) => {
             throw err;
@@ -174,7 +183,7 @@ const Cluster = () => {
         try {
           const dataStepTwo = await postSubjectDPStepTwo({
             form_id: formID,
-            subjects: selectedCategories,
+            subjects: selectedSubjectsDP,
           });
           setSelectedCategories([]);
           setIsLoading(false);
@@ -206,7 +215,7 @@ const Cluster = () => {
   useEffect(() => {
     getDataSubject(current);
   }, []);
-  // console.log(formIdStepOne);
+  console.log(selectedSubjectsDP);
 
   return (
     <div className="cluster--container">
@@ -265,28 +274,142 @@ const Cluster = () => {
                       ""
                     )}
                     <div className="cluster--wrapper-content-body--box-content--wrapper-body">
-                      {responseData?.map((data, idx) => (
-                        <div
-                          key={data.id}
-                          className="cluster--wrapper-content-body--box-content-checkbox"
-                        >
-                          <Checkbox
-                            inputId={data.id}
-                            name="data"
-                            value={data.id}
-                            onChange={onCategoryChange}
-                            checked={selectedCategories.some(
-                              (item) => item === data.id
-                            )}
-                          />
-                          <label
-                            htmlFor={data.id}
-                            className="ml-2 cursor-pointer"
+                      {current === 0 &&
+                        responseData?.map((data, idx) => (
+                          <div
+                            key={data.id}
+                            className="cluster--wrapper-content-body--box-content-checkbox"
                           >
-                            {data.name}
-                          </label>
-                        </div>
-                      ))}
+                            <Checkbox
+                              inputId={data.id}
+                              name="data"
+                              value={data.id}
+                              onChange={onCategoryChange}
+                              checked={selectedCategories.some(
+                                (item) => item === data.id
+                              )}
+                            />
+                            <label
+                              htmlFor={data.id}
+                              className="ml-2 cursor-pointer"
+                            >
+                              {data.name}
+                            </label>
+                          </div>
+                        ))}
+                      {current === 1 && (
+                        <>
+                          <div className="cluster--wrapper-content-body--box-content-dropdown">
+                            <label htmlFor="">Language & Literature</label>
+                            <Dropdown
+                              value={languageLiterature}
+                              onChange={(e) => {
+                                console.log(e.target.value);
+                                let _selectedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
+                                _selectedSubjectsDP.push(e.target.value.id);
+                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                setLanguageLiterature(e.value);
+                              }}
+                              options={responseData.group_1}
+                              optionLabel="name"
+                              placeholder="Select Language & Literature"
+                              className="dropdown--diploma-programmed"
+                            />
+                          </div>
+                          <div className="cluster--wrapper-content-body--box-content-dropdown">
+                            <label htmlFor="">Language Acquisition</label>
+                            <Dropdown
+                              value={languageAcquistition}
+                              onChange={(e) => {
+                                let _selectedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
+                                _selectedSubjectsDP.push(e.target.value.id);
+                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                setLanguageAcquistition(e.value);
+                              }}
+                              options={responseData.group_2}
+                              optionLabel="name"
+                              placeholder="Select Language Acquisition"
+                              className="dropdown--diploma-programmed"
+                            />
+                          </div>
+                          <div className="cluster--wrapper-content-body--box-content-dropdown">
+                            <label htmlFor="">Mathematics</label>
+                            <Dropdown
+                              value={mathematics}
+                              onChange={(e) => {
+                                let _selectedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
+                                _selectedSubjectsDP.push(e.target.value.id);
+                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                setMathematics(e.value);
+                              }}
+                              options={responseData.group_3}
+                              optionLabel="name"
+                              placeholder="Select Mathematics"
+                              className="dropdown--diploma-programmed"
+                            />
+                          </div>
+                          <div className="cluster--wrapper-content-body--box-content-dropdown">
+                            <label htmlFor="">Individuals & Societies</label>
+                            <Dropdown
+                              value={individualSocieties}
+                              onChange={(e) => {
+                                let _selectedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
+                                _selectedSubjectsDP.push(e.target.value.id);
+                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                setIndividualSocieties(e.value);
+                              }}
+                              options={responseData.group_4}
+                              optionLabel="name"
+                              placeholder="Select Individuals & Societies"
+                              className="dropdown--diploma-programmed"
+                            />
+                          </div>
+                          <div className="cluster--wrapper-content-body--box-content-dropdown">
+                            <label htmlFor="">Science</label>
+                            <Dropdown
+                              value={science}
+                              onChange={(e) => {
+                                let _selectedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
+                                _selectedSubjectsDP.push(e.target.value.id);
+                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                setScience(e.value);
+                              }}
+                              options={responseData.group_5}
+                              optionLabel="name"
+                              placeholder="Select Science"
+                              className="dropdown--diploma-programmed"
+                            />
+                          </div>
+                          <div className="cluster--wrapper-content-body--box-content-dropdown">
+                            <label htmlFor="">Arts</label>
+                            <Dropdown
+                              value={arts}
+                              onChange={(e) => {
+                                let _selectedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
+                                _selectedSubjectsDP.push(e.target.value.id);
+                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                setArts(e.value);
+                              }}
+                              options={responseData.group_6}
+                              optionLabel="name"
+                              placeholder="Select Arts"
+                              className="dropdown--diploma-programmed"
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 ) : (

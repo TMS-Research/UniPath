@@ -8,9 +8,9 @@ export async function getCareerCluster() {
     throw error;
   }
 }
-export async function getSubjectDP() {
+export async function getSubjectDP(idFormStepOne) {
   try {
-    const { data } = await api.get("/subject");
+    const { data } = await api.get(`/form/steptwo/sb/${idFormStepOne}`);
     return data;
   } catch (error) {
     throw error;
