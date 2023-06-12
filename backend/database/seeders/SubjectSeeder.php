@@ -14,7 +14,7 @@ class SubjectSeeder extends Seeder
      */
     public function run(): void
     {
-        $datanogr = array('Social and Cultural Anthropology','World Religions','Philosophy','Sports','Exercise and Health Science','Any Mathematics stream','Film','Information Technology in a Global Society','Environmental Science','Dance','Global Politics','History','Languages',' Design Technology');
+        $datanogr = array('Social and Cultural Anthropology','World Religions','Philosophy','Sports','Exercise and Health Science','Any Mathematics stream','Film','Information Technology in a Global Society','Environmental Science','Dance','Global Politics','History','Languages','Design Technology');
 
         $datawithgr = array('Indonesia A', 'English A', 'Korean A', 'English B', 'Indonesian B', 'Chinese B-Mandarin', 'French ab initio','Mathematics: Analysis and Approaches HL', 'Mathematics: Analysis and Approaches SL', 'Mathematics: Applications and Interpretation HL', 'Mathematics: Applications and Interpretation SL', 'Visual Arts', 'Theatre', 'Music','Business Management', 'Digital Society', 'Economics', 'Geography', 'Psychology', 'Environmental systems and societies', 'Biology', 'Chemistry', 'Physics','Computer Science');
 
