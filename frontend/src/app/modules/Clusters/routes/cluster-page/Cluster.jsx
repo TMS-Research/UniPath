@@ -57,6 +57,15 @@ const Cluster = () => {
   const [individualSocieties, setIndividualSocieties] = useState(null);
   const [science, setScience] = useState(null);
   const [arts, setArts] = useState(null);
+  const [checkboxValue, setCheckboxValues] = useState(Array.from({ length: 6}, () => ({ 0:false, 1:false, 2:false})));
+
+  const handleCheckboxChange = (index, checkboxIndex, checked, subjectId)=> {
+    setCheckboxValues(prevState =>{
+      const updateValues = [...prevState];
+      updateValues[index] = {...updateValues[index], [checkboxIndex] : checked, "subjectId" : subjectId.subject_id};
+      return updateValues;
+    });
+  }
 
   const next = () => {
     if (
@@ -216,7 +225,7 @@ const Cluster = () => {
     getDataSubject(current);
   }, []);
   console.log(selectedSubjectsDP);
-
+  console.log(checkboxValue);
   return (
     <div className="cluster--container">
       <div className="cluster--wrapper cluster--wrapper-content">
@@ -348,7 +357,7 @@ const Cluster = () => {
                                 setSelectedSubjectsDP(_selectedSubjectsDP);
                                 setMathematics(e.value);
                               }}
-                              options={responseData.group_3}
+                              options={responseData.group_5}
                               optionLabel="name"
                               placeholder="Select Mathematics"
                               className="dropdown--diploma-programmed"
@@ -366,7 +375,7 @@ const Cluster = () => {
                                 setSelectedSubjectsDP(_selectedSubjectsDP);
                                 setIndividualSocieties(e.value);
                               }}
-                              options={responseData.group_4}
+                              options={responseData.group_3}
                               optionLabel="name"
                               placeholder="Select Individuals & Societies"
                               className="dropdown--diploma-programmed"
@@ -384,7 +393,7 @@ const Cluster = () => {
                                 setSelectedSubjectsDP(_selectedSubjectsDP);
                                 setScience(e.value);
                               }}
-                              options={responseData.group_5}
+                              options={responseData.group_4}
                               optionLabel="name"
                               placeholder="Select Science"
                               className="dropdown--diploma-programmed"
@@ -452,13 +461,13 @@ const Cluster = () => {
                               <td>{idx + 1}</td>
                               <td>{subject.name}</td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox />
+                                <Checkbox value="isGood" checked={checkboxValue[idx] && checkboxValue[idx][0]} onChange={e => handleCheckboxChange(idx, 0, e.checked, subject)}/>
                               </td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox />
+                                <Checkbox value="isInterested" checked={checkboxValue[idx] && checkboxValue[idx][1]} onChange={e => handleCheckboxChange(idx, 1, e.checked, subject)}/>
                               </td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox />
+                                <Checkbox value="isRequired" checked={checkboxValue[idx] && checkboxValue[idx][2]} onChange={e => handleCheckboxChange(idx, 2, e.checked, subject)}/>
                               </td>
                             </tr>
                           ))}
