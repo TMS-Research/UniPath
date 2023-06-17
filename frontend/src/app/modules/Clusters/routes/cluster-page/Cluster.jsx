@@ -58,6 +58,21 @@ const Cluster = () => {
   const [science, setScience] = useState(null);
   const [arts, setArts] = useState(null);
   const [optionSubject, setOptionSubject] = useState(null);
+  const [checkboxValue, setCheckboxValues] = useState(
+    Array.from({ length: 6 }, () => ({ 0: false, 1: false, 2: false }))
+  );
+
+  const handleCheckboxChange = (index, checkboxIndex, checked, subjectId) => {
+    setCheckboxValues((prevState) => {
+      const updateValues = [...prevState];
+      updateValues[index] = {
+        ...updateValues[index],
+        [checkboxIndex]: checked,
+        subjectId: subjectId.subject_id,
+      };
+      return updateValues;
+    });
+  };
 
   const next = () => {
     if (
@@ -75,7 +90,8 @@ const Cluster = () => {
       });
       console.log(selectedCategories);
       return;
-    } if (selectedSubjectsDP.some(subject => subject === 0)) {
+    }
+    if (selectedSubjectsDP.some((subject) => subject === 0)) {
       Swal.fire({
         title: "there must be cluster option!",
         showClass: {
@@ -128,8 +144,8 @@ const Cluster = () => {
         await getSubjectDP(formIdStepOne)
           .then((res) => {
             setResponseData(res);
-            setOptionSubject({ 'group_1': res.group_1, 'group_2': res.group_2 })
-            setSelectedSubjectsDP([0, 0, 0, 0, 0, 0])
+            setOptionSubject({ group_1: res.group_1, group_2: res.group_2 });
+            setSelectedSubjectsDP([0, 0, 0, 0, 0, 0]);
             console.log(res);
           })
           .catch((err) => {
@@ -305,21 +321,31 @@ const Cluster = () => {
                               value={languageLiterature}
                               onChange={(e) => {
                                 console.log(e.target.value);
-                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                const updatedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
                                 updatedSubjectsDP[0] = e.target.value.id;
                                 setSelectedSubjectsDP(updatedSubjectsDP);
                                 setLanguageLiterature(e.value);
-                                const updatedOptionSubject = { ...optionSubject }; // Membuat salinan objek optionSubject
+                                const updatedOptionSubject = {
+                                  ...optionSubject,
+                                }; // Membuat salinan objek optionSubject
                                 const optionArray = [];
-                                for (let i = 0; i < responseData.group_2.length; i++) {
-                                  if (responseData.group_2[i].id !== e.target.value.id) {
+                                for (
+                                  let i = 0;
+                                  i < responseData.group_2.length;
+                                  i++
+                                ) {
+                                  if (
+                                    responseData.group_2[i].id !==
+                                    e.target.value.id
+                                  ) {
                                     optionArray.push(responseData.group_2[i]);
                                   }
                                 }
                                 updatedOptionSubject.group_2 = optionArray; // Mengganti nilai group1 dengan nilai baru
                                 console.log(optionArray);
                                 setOptionSubject(updatedOptionSubject);
-
                               }}
                               options={optionSubject.group_1}
                               optionLabel="name"
@@ -332,7 +358,9 @@ const Cluster = () => {
                             <Dropdown
                               value={languageAcquistition}
                               onChange={(e) => {
-                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                const updatedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
                                 updatedSubjectsDP[1] = e.target.value.id;
                                 setSelectedSubjectsDP(updatedSubjectsDP);
                                 setLanguageAcquistition(e.value);
@@ -349,7 +377,9 @@ const Cluster = () => {
                             <Dropdown
                               value={mathematics}
                               onChange={(e) => {
-                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                const updatedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
                                 updatedSubjectsDP[2] = e.target.value.id;
                                 setSelectedSubjectsDP(updatedSubjectsDP);
                                 setMathematics(e.value);
@@ -365,7 +395,9 @@ const Cluster = () => {
                             <Dropdown
                               value={individualSocieties}
                               onChange={(e) => {
-                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                const updatedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
                                 updatedSubjectsDP[3] = e.target.value.id;
                                 setSelectedSubjectsDP(updatedSubjectsDP);
                                 setIndividualSocieties(e.value);
@@ -381,7 +413,9 @@ const Cluster = () => {
                             <Dropdown
                               value={science}
                               onChange={(e) => {
-                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                const updatedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
                                 updatedSubjectsDP[4] = e.target.value.id;
                                 setSelectedSubjectsDP(updatedSubjectsDP);
                                 setScience(e.value);
@@ -397,7 +431,9 @@ const Cluster = () => {
                             <Dropdown
                               value={arts}
                               onChange={(e) => {
-                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                const updatedSubjectsDP = [
+                                  ...selectedSubjectsDP,
+                                ];
                                 updatedSubjectsDP[5] = e.target.value.id;
                                 setSelectedSubjectsDP(updatedSubjectsDP);
                                 setArts(e.value);
@@ -416,7 +452,6 @@ const Cluster = () => {
                   ""
                 )}
                 {current === 2 && (
-
                   <div className="cluster--wrapper-content-body--box-content--wrapper">
                     <div className="cluster--wrapper-content-body--box-content--wrapper-header">
                       <span>I Select the Subject because : </span>
@@ -453,13 +488,52 @@ const Cluster = () => {
                               <td>{idx + 1}</td>
                               <td>{subject.name}</td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox />
+                                <Checkbox
+                                  value="isGood"
+                                  checked={
+                                    checkboxValue[idx] && checkboxValue[idx][0]
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckboxChange(
+                                      idx,
+                                      0,
+                                      e.checked,
+                                      subject
+                                    )
+                                  }
+                                />
                               </td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox />
+                                <Checkbox
+                                  value="isInterested"
+                                  checked={
+                                    checkboxValue[idx] && checkboxValue[idx][1]
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckboxChange(
+                                      idx,
+                                      1,
+                                      e.checked,
+                                      subject
+                                    )
+                                  }
+                                />
                               </td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox />
+                                <Checkbox
+                                  value="isRequired"
+                                  checked={
+                                    checkboxValue[idx] && checkboxValue[idx][2]
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckboxChange(
+                                      idx,
+                                      2,
+                                      e.checked,
+                                      subject
+                                    )
+                                  }
+                                />
                               </td>
                             </tr>
                           ))}
