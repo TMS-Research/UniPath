@@ -57,15 +57,7 @@ const Cluster = () => {
   const [individualSocieties, setIndividualSocieties] = useState(null);
   const [science, setScience] = useState(null);
   const [arts, setArts] = useState(null);
-  const [checkboxValue, setCheckboxValues] = useState(Array.from({ length: 6}, () => ({ 0:false, 1:false, 2:false})));
-
-  const handleCheckboxChange = (index, checkboxIndex, checked, subjectId)=> {
-    setCheckboxValues(prevState =>{
-      const updateValues = [...prevState];
-      updateValues[index] = {...updateValues[index], [checkboxIndex] : checked, "subjectId" : subjectId.subject_id};
-      return updateValues;
-    });
-  }
+  const [optionSubject, setOptionSubject] = useState(null);
 
   const next = () => {
     if (
@@ -83,12 +75,9 @@ const Cluster = () => {
       });
       console.log(selectedCategories);
       return;
-    } else if (
-      current === 1 &&
-      (selectedSubjectsDP.length === 0 || selectedSubjectsDP.length < 6)
-    ) {
+    } if (selectedSubjectsDP.some(subject => subject === 0)) {
       Swal.fire({
-        title: "There must be a cluster option!!",
+        title: "there must be cluster option!",
         showClass: {
           popup: "animate__animated animate__shakeX",
         },
@@ -139,6 +128,8 @@ const Cluster = () => {
         await getSubjectDP(formIdStepOne)
           .then((res) => {
             setResponseData(res);
+            setOptionSubject({ 'group_1': res.group_1, 'group_2': res.group_2 })
+            setSelectedSubjectsDP([0, 0, 0, 0, 0, 0])
             console.log(res);
           })
           .catch((err) => {
@@ -225,7 +216,7 @@ const Cluster = () => {
     getDataSubject(current);
   }, []);
   console.log(selectedSubjectsDP);
-  console.log(checkboxValue);
+
   return (
     <div className="cluster--container">
       <div className="cluster--wrapper cluster--wrapper-content">
@@ -314,14 +305,23 @@ const Cluster = () => {
                               value={languageLiterature}
                               onChange={(e) => {
                                 console.log(e.target.value);
-                                let _selectedSubjectsDP = [
-                                  ...selectedSubjectsDP,
-                                ];
-                                _selectedSubjectsDP.push(e.target.value.id);
-                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                updatedSubjectsDP[0] = e.target.value.id;
+                                setSelectedSubjectsDP(updatedSubjectsDP);
                                 setLanguageLiterature(e.value);
+                                const updatedOptionSubject = { ...optionSubject }; // Membuat salinan objek optionSubject
+                                const optionArray = [];
+                                for (let i = 0; i < responseData.group_2.length; i++) {
+                                  if (responseData.group_2[i].id !== e.target.value.id) {
+                                    optionArray.push(responseData.group_2[i]);
+                                  }
+                                }
+                                updatedOptionSubject.group_2 = optionArray; // Mengganti nilai group1 dengan nilai baru
+                                console.log(optionArray);
+                                setOptionSubject(updatedOptionSubject);
+
                               }}
-                              options={responseData.group_1}
+                              options={optionSubject.group_1}
                               optionLabel="name"
                               placeholder="Select Language & Literature"
                               className="dropdown--diploma-programmed"
@@ -332,14 +332,13 @@ const Cluster = () => {
                             <Dropdown
                               value={languageAcquistition}
                               onChange={(e) => {
-                                let _selectedSubjectsDP = [
-                                  ...selectedSubjectsDP,
-                                ];
-                                _selectedSubjectsDP.push(e.target.value.id);
-                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                updatedSubjectsDP[1] = e.target.value.id;
+                                setSelectedSubjectsDP(updatedSubjectsDP);
                                 setLanguageAcquistition(e.value);
+                                console.log(optionSubject);
                               }}
-                              options={responseData.group_2}
+                              options={optionSubject.group_2}
                               optionLabel="name"
                               placeholder="Select Language Acquisition"
                               className="dropdown--diploma-programmed"
@@ -350,11 +349,9 @@ const Cluster = () => {
                             <Dropdown
                               value={mathematics}
                               onChange={(e) => {
-                                let _selectedSubjectsDP = [
-                                  ...selectedSubjectsDP,
-                                ];
-                                _selectedSubjectsDP.push(e.target.value.id);
-                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                updatedSubjectsDP[2] = e.target.value.id;
+                                setSelectedSubjectsDP(updatedSubjectsDP);
                                 setMathematics(e.value);
                               }}
                               options={responseData.group_5}
@@ -368,11 +365,9 @@ const Cluster = () => {
                             <Dropdown
                               value={individualSocieties}
                               onChange={(e) => {
-                                let _selectedSubjectsDP = [
-                                  ...selectedSubjectsDP,
-                                ];
-                                _selectedSubjectsDP.push(e.target.value.id);
-                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                updatedSubjectsDP[3] = e.target.value.id;
+                                setSelectedSubjectsDP(updatedSubjectsDP);
                                 setIndividualSocieties(e.value);
                               }}
                               options={responseData.group_3}
@@ -386,11 +381,9 @@ const Cluster = () => {
                             <Dropdown
                               value={science}
                               onChange={(e) => {
-                                let _selectedSubjectsDP = [
-                                  ...selectedSubjectsDP,
-                                ];
-                                _selectedSubjectsDP.push(e.target.value.id);
-                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                updatedSubjectsDP[4] = e.target.value.id;
+                                setSelectedSubjectsDP(updatedSubjectsDP);
                                 setScience(e.value);
                               }}
                               options={responseData.group_4}
@@ -404,11 +397,9 @@ const Cluster = () => {
                             <Dropdown
                               value={arts}
                               onChange={(e) => {
-                                let _selectedSubjectsDP = [
-                                  ...selectedSubjectsDP,
-                                ];
-                                _selectedSubjectsDP.push(e.target.value.id);
-                                setSelectedSubjectsDP(_selectedSubjectsDP);
+                                const updatedSubjectsDP = [...selectedSubjectsDP];
+                                updatedSubjectsDP[5] = e.target.value.id;
+                                setSelectedSubjectsDP(updatedSubjectsDP);
                                 setArts(e.value);
                               }}
                               options={responseData.group_6}
@@ -425,6 +416,7 @@ const Cluster = () => {
                   ""
                 )}
                 {current === 2 && (
+
                   <div className="cluster--wrapper-content-body--box-content--wrapper">
                     <div className="cluster--wrapper-content-body--box-content--wrapper-header">
                       <span>I Select the Subject because : </span>
@@ -461,13 +453,13 @@ const Cluster = () => {
                               <td>{idx + 1}</td>
                               <td>{subject.name}</td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox value="isGood" checked={checkboxValue[idx] && checkboxValue[idx][0]} onChange={e => handleCheckboxChange(idx, 0, e.checked, subject)}/>
+                                <Checkbox />
                               </td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox value="isInterested" checked={checkboxValue[idx] && checkboxValue[idx][1]} onChange={e => handleCheckboxChange(idx, 1, e.checked, subject)}/>
+                                <Checkbox />
                               </td>
                               <td style={{ textAlign: "center" }}>
-                                <Checkbox value="isRequired" checked={checkboxValue[idx] && checkboxValue[idx][2]} onChange={e => handleCheckboxChange(idx, 2, e.checked, subject)}/>
+                                <Checkbox />
                               </td>
                             </tr>
                           ))}
