@@ -143,16 +143,10 @@ class FormController extends Controller
             $data = [
                 'form_id' => $validated['form_id'],
                 'subject_id' => $cas['subject_id'],
+                'isGood' => $cas['isGood'],
+                'isInterested' => $cas['isInterested'],
+                'isRequired' => $cas['isRequired']
             ];       
-            foreach($cas['cause'] as $ca){
-                if($ca == 'isGood'){
-                    $data['isGood'] = 1;
-                }else if($ca == 'isInterested'){
-                    $data['isInterested'] =1;
-                }else if($ca == 'isRequired'){
-                    $data['isRequired'] = 1;
-                }
-            }
             SubjectCause::create($data);
         }
 
