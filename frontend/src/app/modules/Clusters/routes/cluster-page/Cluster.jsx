@@ -4,13 +4,17 @@ import "./../../styles/index.scope.css";
 import React, { useEffect, useState } from "react";
 import { Button, Divider, message, Steps } from "antd";
 import { Dropdown } from "primereact/dropdown";
+import { Calendar } from 'primereact/calendar';
 import {
   getCareerCluster,
   getRequiredSubjectDP,
   getSubjectDP,
   getTheCoosenSubject,
   postClusterProgramStepOne,
+  postSubjectDPStepThree,
+  postSubjectDPStepFour,
   postSubjectDPStepTwo,
+  getSummary
 } from "../../api/ClusterService";
 import LoadComponent from "../../../../components/loaders/LoadComponent";
 import { Checkbox } from "primereact/checkbox";
@@ -57,19 +61,33 @@ const Cluster = () => {
   const [individualSocieties, setIndividualSocieties] = useState(null);
   const [science, setScience] = useState(null);
   const [arts, setArts] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const [optionSubject, setOptionSubject] = useState(null);
+
+  const [Summary, setSummary] = useState(null);
   const [checkboxValue, setCheckboxValues] = useState(
-    Array.from({ length: 6 }, () => ({ 0: false, 1: false, 2: false }))
+    Array.from({ length: 6 }, () => ({ "isGood": false, "isInterested": false, "isRequired": false }))
   );
 
   const handleCheckboxChange = (index, checkboxIndex, checked, subjectId) => {
     setCheckboxValues((prevState) => {
       const updateValues = [...prevState];
+      let optioncheckbox = null;
+      if (checkboxIndex == 0) {
+        optioncheckbox = "isGood"
+      } else if (checkboxIndex == 1) {
+        optioncheckbox = "isInterested"
+      } else {
+        optioncheckbox = "isRequired"
+      }
       updateValues[index] = {
         ...updateValues[index],
-        [checkboxIndex]: checked,
-        subjectId: subjectId.subject_id,
+        [optioncheckbox]: checked,
+        subject_id: subjectId.subject_id,
       };
+      console.log(updateValues);
       return updateValues;
     });
   };
@@ -91,9 +109,32 @@ const Cluster = () => {
       console.log(selectedCategories);
       return;
     }
-    if (selectedSubjectsDP.some((subject) => subject === 0)) {
+    if (current === 1 && selectedSubjectsDP.some((subject) => subject === 0)) {
       Swal.fire({
         title: "there must be cluster option!",
+        showClass: {
+          popup: "animate__animated animate__shakeX",
+        },
+        icon: "warning",
+        width: 700,
+      });
+      return;
+    }
+    if (current === 2 && checkboxValue.some((vall) => vall.isGood === false && vall.isInterested === false && vall.isRequired === false)) {
+      Swal.fire({
+        title: "please complete the form!",
+        showClass: {
+          popup: "animate__animated animate__shakeX",
+        },
+        icon: "warning",
+        width: 700,
+      });
+      return;
+    }
+    if (current === 3 && selectedTime==null ||current === 3 && selectedPerson==null) {
+      console.log(current)
+      Swal.fire({
+        title: "the form is required!",
         showClass: {
           popup: "animate__animated animate__shakeX",
         },
@@ -116,6 +157,14 @@ const Cluster = () => {
           await postData(current);
           setCurrent(current + 1);
         } else if (current === 1) {
+          await postData(current);
+          setCurrent(current + 1);
+        }
+        else if (current === 2) {
+          await postData(current);
+          setCurrent(current + 1);
+        }
+        else if (current === 3) {
           await postData(current);
           setCurrent(current + 1);
         }
@@ -173,6 +222,18 @@ const Cluster = () => {
         setSelectedCategories([]);
         setIsLoading(false);
         break;
+      case 4:
+        setIsLoading(true);
+        await getSummary(formIdStepOne)
+          .then(({ data }) => {
+            setSummary(data);
+            console.log(data);
+          })
+          .catch((err) => {
+            throw err;
+          });
+        setIsLoading(false);
+        break;
       default:
         break;
     }
@@ -209,6 +270,34 @@ const Cluster = () => {
           throw error;
         }
         break;
+      case 2:
+        setIsLoading(true);
+        try {
+          const dataStepThree = await postSubjectDPStepThree({
+            form_id: formID,
+            causes: checkboxValue,
+          });
+          console.log(checkboxValue);
+          setSelectedCategories([]);
+          setIsLoading(false);
+        } catch (error) {
+          throw error;
+        }
+        break;
+      case 3:
+        setIsLoading(true);
+        try {
+          const dataStepFour = await postSubjectDPStepFour({
+            form_id: formID,
+            meeting_person: selectedPerson.name,
+            meeting_time: selectedTime
+          });
+          setIsLoading(false);
+          getDataSubject(current + 1, formID);
+        } catch (error) {
+          throw error;
+        }
+        break;
       default:
         break;
     }
@@ -231,7 +320,6 @@ const Cluster = () => {
   useEffect(() => {
     getDataSubject(current);
   }, []);
-  console.log(selectedSubjectsDP);
 
   return (
     <div className="cluster--container">
@@ -491,7 +579,7 @@ const Cluster = () => {
                                 <Checkbox
                                   value="isGood"
                                   checked={
-                                    checkboxValue[idx] && checkboxValue[idx][0]
+                                    checkboxValue[idx] && checkboxValue[idx].isGood
                                   }
                                   onChange={(e) =>
                                     handleCheckboxChange(
@@ -507,7 +595,7 @@ const Cluster = () => {
                                 <Checkbox
                                   value="isInterested"
                                   checked={
-                                    checkboxValue[idx] && checkboxValue[idx][1]
+                                    checkboxValue[idx] && checkboxValue[idx].isInterested
                                   }
                                   onChange={(e) =>
                                     handleCheckboxChange(
@@ -523,7 +611,7 @@ const Cluster = () => {
                                 <Checkbox
                                   value="isRequired"
                                   checked={
-                                    checkboxValue[idx] && checkboxValue[idx][2]
+                                    checkboxValue[idx] && checkboxValue[idx].isRequired
                                   }
                                   onChange={(e) =>
                                     handleCheckboxChange(
@@ -540,6 +628,56 @@ const Cluster = () => {
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                )}
+                {current === 3 && (
+                  <div>
+                    <div className="cluster--wrapper-content-body--box-slide4-dropdown">
+                      <label htmlFor="">Select Teacher</label>
+                      <Dropdown
+                        value={selectedPerson}
+                        onChange={(e) => {
+                          setSelectedPerson(e.value);
+                        }}
+                        options={[{ "name": "Ms.Ellie" }, { "name": "Mr.Eric" }]}
+                        optionLabel="name"
+                        placeholder="Select Teacher"
+                        className="dropdown--select-teacher"
+                      />
+                    </div>
+                    <div className="cluster--wrapper-content-body--box-slide4-dropdown">
+                      <label htmlFor="">Select Time</label>
+                      <Calendar className="dropdown--select-time" placeholder="Select Meeting time" value={selectedTime} onChange={(e) => setSelectedTime(e.value)} showTime hourFormat="12" />
+                    </div>
+                  </div>
+                )} {current === 4 && (
+                  <div>
+                    < table className="cluster--wrapper-content-body--box-content--wrapper--summary--table"
+                        cellSpacing="30"
+                        cellPadding="30">
+                          <tbody>
+                      <tr>
+                        <td> Program</td>
+                        <td>{Summary.programs.map((subject, idx) => (
+                        <span key={idx}>{subject} {idx!=Summary.programs.length-1? ", " :""}</span>
+                      ))}</td>
+                      </tr>
+                      <tr>
+                        <td> Subjects</td>
+                        <td>{Summary.subjects.map((subject, idx) => (
+                        <span key={idx}>{subject} {idx!=Summary.subjects.length-1? ", " :""}</span>
+                      ))}</td>
+                      </tr>
+                      <tr>
+                        <td>Meeting teacher</td>
+                        <td>{Summary.form.meeting_person}</td>
+                      </tr>
+                      <tr>
+                        <td>Meeting time</td>
+                        <td>{Summary.form.meeting_time}</td>
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
                 )}
               </>

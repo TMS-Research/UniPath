@@ -208,6 +208,46 @@
   justify-content: center !important;
 }
 
+.cluster--wrapper-content-body--box-slide4-dropdown {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 8px;
+  width: 500px;
+}
+
+.dropdown--select-teacher {
+  width: 100%;
+}
+.dropdown--select-time {
+  width: 100%;
+}
+
+.cluster--wrapper-content-body--box-content--wrapper--summary--table {
+  width: 100%;
+  border: none;
+}
+
+.cluster--wrapper-content-body--box-content--wrapper--summary--table
+  > thead
+  > tr
+  > th {
+  text-align: start;
+}
+
+.cluster--wrapper-content-body--box-content--wrapper--summary--table
+  > tbody
+  > tr
+  > td {
+  padding: 10px 10px;
+}
+.cluster--wrapper-content-body--box-content--wrapper--summary--table tbody tr td:first-child {
+  font-size: 15px;
+  font-weight: bold;
+  display: flex;
+}
+
 /* .cluster--wrapper-content-body--box-content--wrapper--subject-because--header {
   width: 100%;
   display: flex;

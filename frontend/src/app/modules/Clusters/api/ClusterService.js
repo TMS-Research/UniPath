@@ -34,6 +34,14 @@ export async function getTheCoosenSubject(idFormStepOne) {
     throw error;
   }
 }
+export async function getSummary(idFormStepOne) {
+  try {
+    const { data } = await api.get(`/form/final/${idFormStepOne}`);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function postClusterProgramStepOne(programs) {
   try {
@@ -48,6 +56,20 @@ export async function postSubjectDPStepTwo(subjects) {
   console.log(subjects);
   try {
     const { data } = await api.post("/form/steptwo", subjects);
+    return data;
+  } catch (error) {}
+}
+export async function postSubjectDPStepThree(subjects) {
+  console.log(subjects);
+  try {
+    const { data } = await api.post("/form/stepthree", subjects);
+    return data;
+  } catch (error) {}
+}
+export async function postSubjectDPStepFour(subjects) {
+  console.log(subjects);
+  try {
+    const { data } = await api.post("/form/stepfour", subjects);
     return data;
   } catch (error) {}
 }
